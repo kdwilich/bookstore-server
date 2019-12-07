@@ -46,6 +46,7 @@ app.get('/books', (req, res) => {
         }
     })
 })
+
 app.get('/employees', (req, res) => {
     connection.query(SELECT_ALL_EMPLOYEES_QUERY, (err, results) => {
         if(err) return res.send(err)
@@ -53,6 +54,6 @@ app.get('/employees', (req, res) => {
     })
 })
 
-app.listen(4000, () => {
-    console.log(`products on port 4000`);
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`products on Heroku PORT`);
 })
