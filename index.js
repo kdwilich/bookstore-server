@@ -5,7 +5,8 @@ const mysql = require('mysql');
 const app = express();
 
 const SELECT_ALL_BOOKS_QUERY = 'SELECT * FROM books';
-const SELECT_ALL_EMPLOYEES_QUERY = 'SELECT * FROM employees';
+const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
+const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
@@ -21,19 +22,58 @@ app.get('/', (req, res) => {
     res.send('go to /books')
 })
 
-app.get('/employees/add', (req, res) => {
-    const { name, employee_no, address, salary, isManager } = req.query;
+app.get('/payments/add', (req, res) => {
+    const { PID, OID, Bstreet, Bcity, Bstate, Bzip, card_info } = req.query;
     
-    const INSERT_EMPLOYEE_QUERY = `INSERT INTO Employees Values('${employee_no}', '${name}', '${address}', '${salary}', '${isManager}')`;
-    // /add?employee_no=0420&name=Kyle&address=123DankSt&salary=69.42&isManager=false
-    pool.query(INSERT_EMPLOYEE_QUERY, (err, results) => {
+    const INSERT_CART_QUERY = `INSERT INTO Payments Values('${PID}', '${OID}', '${Bstreet}', '${Bcity}', '${Bstate}', '${Bzip}', '${card_info}')`;
+    // /add?PID=24&OID=52342&Bstreet=123%20Walnut&Bcity=Rogers&Bstate=AR&Bzip=72756&card_info=34123562349390
+    pool.query(INSERT_CART_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
         }
         else {
-            return res.send('Successfully Added Employee');
+            return res.send('Successfully Added Payment');
         }
     });
+})
+
+app.get('/payments', (req, res) => {
+    pool.query(SELECT_ALL_PAYMENTS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
+app.get('/carts/add', (req, res) => {
+    const { AccountID, cartID, Book, ISBN, Cart_Quantity } = req.query;
+    
+    const INSERT_CART_QUERY = `INSERT INTO Carts Values('${AccountID}', '${cartID}', '${Book}', '${ISBN}', '${Cart_Quantity}')`;
+    // /add?AccountID=111111&cartID=2&Book=book2&ISBN=9787892881657&Cart_Quantity=1
+    pool.query(INSERT_CART_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        }
+        else {
+            return res.send('Successfully Added Cart');
+        }
+    });
+})
+
+app.get('/carts', (req, res) => {
+    pool.query(SELECT_ALL_CARTS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
 })
 
 app.get('/books', (req, res) => {
@@ -45,13 +85,6 @@ app.get('/books', (req, res) => {
                 data: results
             })
         }
-    })
-})
-
-app.get('/employees', (req, res) => {
-    pool.query(SELECT_ALL_EMPLOYEES_QUERY, (err, results) => {
-        if(err) return res.send(err)
-        else return res.json({ data: results })
     })
 })
 
