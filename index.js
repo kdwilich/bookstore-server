@@ -7,6 +7,7 @@ const app = express();
 const SELECT_ALL_BOOKS_QUERY = 'SELECT * FROM books';
 const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
 const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
+const DELETE_ALL_CARTS_QUERY = 'TRUNCATE TABLE carts';
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
@@ -25,9 +26,9 @@ app.get('/', (req, res) => {
 app.get('/payments/add', (req, res) => {
     const { PID, OID, Bstreet, Bcity, Bstate, Bzip, card_info } = req.query;
     
-    const INSERT_CART_QUERY = `INSERT INTO Payments Values('${PID}', '${OID}', '${Bstreet}', '${Bcity}', '${Bstate}', '${Bzip}', '${card_info}')`;
+    const INSERT_PAYMENTS_QUERY = `INSERT INTO Payments Values('${PID}', '${OID}', '${Bstreet}', '${Bcity}', '${Bstate}', '${Bzip}', '${card_info}')`;
     // /add?PID=24&OID=52342&Bstreet=123%20Walnut&Bcity=Rogers&Bstate=AR&Bzip=72756&card_info=34123562349390
-    pool.query(INSERT_CART_QUERY, (err, results) => {
+    pool.query(INSERT_PAYMENTS_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
         }
@@ -62,6 +63,18 @@ app.get('/carts/add', (req, res) => {
             return res.send('Successfully Added Cart');
         }
     });
+})
+
+app.get('/carts/delete', (req, res) => {
+    pool.query(DELETE_ALL_CARTS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
 })
 
 app.get('/carts', (req, res) => {
