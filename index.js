@@ -8,6 +8,7 @@ const SELECT_ALL_BOOKS_QUERY = 'SELECT * FROM books';
 const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
 const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
 const DELETE_ALL_CARTS_QUERY = 'TRUNCATE TABLE carts';
+const CART_TOTAL_PRICE_QUERY = 'select sum(price) as total from books b , carts c where b.ISBN = c.ISBN';
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
@@ -20,7 +21,20 @@ const pool = mysql.createPool( {
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('go to /books')
+    res.send(
+        "asdf"
+        // <div>
+        //     <ul>
+        //         <li href="/books">Books</li>
+        //         <li href="/carts">Carts</li>
+        //         <li href="/carts/add">Add Carts</li>
+        //         <li href="/carts/total_price">Price of Cart</li>
+        //         <li href="/carts/delete/all">Delete All Carts</li>
+        //         <li href="/payments">Payments</li>
+        //         <li href="/payments/add">Add Payments</li>
+        //     </ul>
+        // </div>
+    )
 })
 
 app.get('/payments/add', (req, res) => {
@@ -50,6 +64,18 @@ app.get('/payments', (req, res) => {
     })
 })
 
+app.get('/carts/total_price', (req, res) => {
+    pool.query(CART_TOTAL_PRICE_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
 app.get('/carts/add', (req, res) => {
     const { AccountID, cartID, Book, ISBN, Cart_Quantity } = req.query;
     
@@ -65,7 +91,7 @@ app.get('/carts/add', (req, res) => {
     });
 })
 
-app.get('/carts/delete', (req, res) => {
+app.get('/carts/delete/all', (req, res) => {
     pool.query(DELETE_ALL_CARTS_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
