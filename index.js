@@ -9,7 +9,8 @@ const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
 const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
 const DELETE_ALL_CARTS_QUERY = 'TRUNCATE TABLE carts';
 const CART_TOTAL_PRICE_QUERY = 'SELECT SUM(price * Cart_Quantity) AS Total FROM carts c, books b WHERE b.ISBN = c.ISBN';
-const COMPLETE_PURCHASE = 'UPDATE books b, carts c set b.Stock=b.Stock-c.Cart_Quantity WHERE b.ISBN = c.ISBN'
+const UPDATE_BOOK_STOCK_QUERY = 'UPDATE books b, carts c set b.Stock=b.Stock-c.Cart_Quantity WHERE b.ISBN = c.ISBN';
+const SELECT_ALL_ORDERS_QUERY = 'SELECT * FROM orders';
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
@@ -105,8 +106,35 @@ app.get('/payments', (req, res) => {
     })
 })
 
+app.get('/orders', (req, res) => {
+    pool.query(SELECT_ALL_ORDERS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
+app.get('/orders/add', (req, res) => {
+    const { PID, OID, Bstreet, Bcity, Bstate, Bzip, card_info } = req.query;
+    
+    const INSERT_ORDERS_QUERY = `INSERT INTO Payments Values (${PID}, ${OID}, ${Bstreet}, ${Bcity}, ${Bstate}, ${Bzip}, ${card_info});)`;
+    // /add?PID=24&OID=52342&Bstreet=123%20Walnut&Bcity=Rogers&Bstate=AR&Bzip=72756&card_info=34123562349390
+    pool.query(INSERT_PAYMENTS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        }
+        else {
+            return res.send('Successfully Added Payment');
+        }
+    });
+})
+
 app.get('/cart/checkout', (req, res) => {
-    pool.query(COMPLETE_PURCHASE, (err, results) => {
+    pool.query(UPDATE_BOOK_STOCK_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
         } else {
