@@ -35,9 +35,10 @@ app.get('/carts/update/add', (req, res) => {
     pool.query(UPDATE_CART_QT_ADD, (err, results) => {
         if(err) {
             return res.send(err)
-        }
-        else {
-            return res.send(`Successfully Added 1 to Quantity of ${ISBN}`);
+        } else {
+            return res.json({
+                data: results
+            })
         }
     })
 })
@@ -50,9 +51,10 @@ app.get('/carts/update/delete', (req, res) => {
     pool.query(UPDATE_CART_QT_DEL, (err, results) => {
         if(err) {
             return res.send(err)
-        }
-        else {
-            return res.send(`Successfully Deleted 1 to Quantity of ${ISBN}`);
+        } else {
+            return res.json({
+                data: results
+            })
         }
     })
 })
