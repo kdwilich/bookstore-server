@@ -21,20 +21,40 @@ const pool = mysql.createPool( {
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send(
-        "asdf"
-        // <div>
-        //     <ul>
-        //         <li href="/books">Books</li>
-        //         <li href="/carts">Carts</li>
-        //         <li href="/carts/add">Add Carts</li>
-        //         <li href="/carts/total_price">Price of Cart</li>
-        //         <li href="/carts/delete/all">Delete All Carts</li>
-        //         <li href="/payments">Payments</li>
-        //         <li href="/payments/add">Add Payments</li>
-        //     </ul>
-        // </div>
-    )
+    res.set('Content-Type', 'text/html');
+    res.send('<div><ul><li href="/books">Books</li><li href="/carts">Carts</li><li href="/carts/add">Add Carts</li><li href="/carts/total_price">Price of Cart</li><li href="/carts/delete/all">Delete All Carts</li><li href="/payments">Payments</li><li href="/payments/add">Add Payments</li></ul></div>')
+})
+
+app.get('/carts/update/add', (req, res) => {
+    const { ISBN } = req.query;
+
+    console.log(ISBN)
+
+    const UPDATE_CART_QT_ADD = `UPDATE carts SET Cart_Quantity=Cart_Quantity+1 WHERE ISBN=${ISBN}`;
+
+    pool.query(UPDATE_CART_QT_ADD, (err, results) => {
+        if(err) {
+            return res.send(err)
+        }
+        else {
+            return res.send(`Successfully Added 1 to Quantity of ${ISBN}`);
+        }
+    })
+})
+
+app.get('/carts/update/delete', (req, res) => {
+    const { ISBN } = req.query;
+
+    const UPDATE_CART_QT_DEL = `UPDATE carts SET Cart_Quantity=Cart_Quantity-1 WHERE ISBN=${ISBN}`;
+
+    pool.query(UPDATE_CART_QT_DEL, (err, results) => {
+        if(err) {
+            return res.send(err)
+        }
+        else {
+            return res.send(`Successfully Deleted 1 to Quantity of ${ISBN}`);
+        }
+    })
 })
 
 app.get('/payments/add', (req, res) => {
