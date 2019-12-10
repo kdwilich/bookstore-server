@@ -22,7 +22,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
     res.set('Content-Type', 'text/html');
-    res.send('<div><ul><li href="/books">Books</li><li href="/carts">Carts</li><li href="/carts/add">Add Carts</li><li href="/carts/total_price">Price of Cart</li><li href="/carts/delete/all">Delete All Carts</li><li href="/payments">Payments</li><li href="/payments/add">Add Payments</li></ul></div>')
+    res.send('<div>Auto-deploy Test</div><div><ul><li href="/books">Books</li><li href="/carts">Carts</li><li href="/carts/add">Add Carts</li><li href="/carts/total_price">Price of Cart</li><li href="/carts/delete/all">Delete All Carts</li><li href="/payments">Payments</li><li href="/payments/add">Add Payments</li></ul></div>')
 })
 
 app.get('/carts/update/add', (req, res) => {
