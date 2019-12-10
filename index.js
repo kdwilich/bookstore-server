@@ -9,6 +9,7 @@ const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
 const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
 const DELETE_ALL_CARTS_QUERY = 'TRUNCATE TABLE carts';
 const CART_TOTAL_PRICE_QUERY = 'SELECT SUM(price * Cart_Quantity) AS Total FROM carts c, books b WHERE b.ISBN = c.ISBN';
+const COMPLETE_PURCHASE = 'UPDATE books b, carts c set b.Stock=b.Stock-c.Cart_Quantity WHERE b.ISBN = c.ISBN'
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
@@ -42,6 +43,8 @@ app.get('/carts/update/add', (req, res) => {
         }
     })
 })
+
+
 
 app.get('/carts/update/delete', (req, res) => {
     const { ISBN } = req.query;
@@ -92,6 +95,18 @@ app.get('/payments/add', (req, res) => {
 
 app.get('/payments', (req, res) => {
     pool.query(SELECT_ALL_PAYMENTS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
+app.get('/cart/checkout', (req, res) => {
+    pool.query(COMPLETE_PURCHASE, (err, results) => {
         if(err) {
             return res.send(err)
         } else {
