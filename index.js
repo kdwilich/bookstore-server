@@ -59,6 +59,22 @@ app.get('/carts/update/delete', (req, res) => {
     })
 })
 
+app.get('/carts/price', (req, res) => {
+    const { ISBN } = req.query;
+
+    const GET_BOOK_PRICE_QUERY = `SELECT price FROM books WHERE ISBN=${ISBN}`;
+
+    pool.query(GET_BOOK_PRICE_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
 app.get('/payments/add', (req, res) => {
     const { PID, OID, Bstreet, Bcity, Bstate, Bzip, card_info } = req.query;
     
