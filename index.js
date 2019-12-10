@@ -8,7 +8,7 @@ const SELECT_ALL_BOOKS_QUERY = 'SELECT * FROM books';
 const SELECT_ALL_CARTS_QUERY = 'SELECT * FROM carts';
 const SELECT_ALL_PAYMENTS_QUERY = 'SELECT * FROM payments';
 const DELETE_ALL_CARTS_QUERY = 'TRUNCATE TABLE carts';
-const CART_TOTAL_PRICE_QUERY = 'select sum(price) as total from books b , carts c where b.ISBN = c.ISBN';
+const CART_TOTAL_PRICE_QUERY = 'SELECT SUM(price * Cart_Quantity) AS Total FROM carts c, books b WHERE b.ISBN = c.ISBN';
 
 const pool = mysql.createPool( {
     connectionLimit : 10,
