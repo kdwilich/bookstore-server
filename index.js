@@ -45,14 +45,28 @@ app.get('/carts/update/add', (req, res) => {
     })
 })
 
-
-
 app.get('/carts/update/delete', (req, res) => {
     const { ISBN } = req.query;
 
     const UPDATE_CART_QT_DEL = `UPDATE carts SET Cart_Quantity=Cart_Quantity-1 WHERE ISBN=${ISBN}`;
 
     pool.query(UPDATE_CART_QT_DEL, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({
+                data: results
+            })
+        }
+    })
+})
+
+app.get('/carts/update/remove', (req, res) => {
+    const { ISBN } = req.query;
+
+    const UPDATE_CART_REMOVE_BOOK_QUERY = `DELETE FROM carts WHERE ISBN=${ISBN}`;
+
+    pool.query(UPDATE_CART_REMOVE_BOOK_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
         } else {
@@ -119,16 +133,16 @@ app.get('/orders', (req, res) => {
 })
 
 app.get('/orders/add', (req, res) => {
-    const { PID, OID, Bstreet, Bcity, Bstate, Bzip, card_info } = req.query;
+    const { AccountID, Total, Cname, Ship_addr, Bill_addr, PID, Date_placed, status, Book_title, ISBN } = req.query;
     
-    const INSERT_ORDERS_QUERY = `INSERT INTO Payments Values (${PID}, ${OID}, ${Bstreet}, ${Bcity}, ${Bstate}, ${Bzip}, ${card_info});)`;
-    // /add?PID=24&OID=52342&Bstreet=123%20Walnut&Bcity=Rogers&Bstate=AR&Bzip=72756&card_info=34123562349390
-    pool.query(INSERT_PAYMENTS_QUERY, (err, results) => {
+    const INSERT_ORDERS_QUERY = `INSERT INTO orders Values (${AccountID}, ${null}, ${Total}, ${Cname}, ${Ship_addr}, ${Bill_addr}, ${PID}, ${Date_placed}, ${status}, ${Book_title}, ${ISBN})`;
+    // localhost:4000/orders/add?AccountID=1234&OID=9&Total=350&Cname="a"&Ship_addr="321TsTunZeed"&Bill_addr="123deeznutsSt"&PID=8&Date_placed="6/9/42"&status="yers"&Book_title="Book3"&ISBN=9787892881657
+    pool.query(INSERT_ORDERS_QUERY, (err, results) => {
         if(err) {
             return res.send(err)
         }
         else {
-            return res.send('Successfully Added Payment');
+            return res.send('Successfully Added Order');
         }
     });
 })
