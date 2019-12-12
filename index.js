@@ -80,7 +80,7 @@ app.get('/carts/update/remove', (req, res) => {
 app.get('/login/verify', (req, res) => {
     const { email_addr, pass } = req.query;
 
-    const VERIFY_CREDENTIALS_QUERY = `SELECT * FROM customers c WHERE c.email_addr="${email_addr}" and c.pass="${pass}"`
+    const VERIFY_CREDENTIALS_QUERY = `SELECT EXISTS(SELECT * FROM customers WHERE email_addr="${email_addr}" AND pass="${pass}") as exsts;`
 
     pool.query(VERIFY_CREDENTIALS_QUERY, (err, results) => {
         if(err) {
