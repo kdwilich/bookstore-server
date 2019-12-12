@@ -77,6 +77,20 @@ app.get('/carts/update/remove', (req, res) => {
     })
 })
 
+app.get('/login/verify', (req, res) => {
+    const { email_addr, pass } = req.query;
+
+    const VERIFY_CREDENTIALS_QUERY = `SELECT * FROM customers c WHERE c.email_addr="${email_addr}" and c.pass="${pass}"`
+
+    pool.query(VERIFY_CREDENTIALS_QUERY, (err, results) => {
+        if(err) {
+            return res.send(err)
+        } else {
+            return res.json({ data: results })
+        }
+    })
+})
+
 app.get('/carts/price', (req, res) => {
     const { ISBN } = req.query;
 
